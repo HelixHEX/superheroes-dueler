@@ -3,6 +3,7 @@ from ability import Ability
 from armor import Armor
 from weapon import Weapon
 
+
 class Hero:
     def __init__(self, name, starting_health=100):
         ''' Instance properties:
@@ -13,16 +14,20 @@ class Hero:
             current_health: Integer
         '''
         self.name = name
-        self.stariting_health = starting_health
+        self.starting_health = starting_health
         self.current_health = starting_health
         self.abilities = list()
         self.armors = list()
+        self.deaths = 0
+        self.kills = 0
 
     def fight(self, opponent):
         global winner
         winner = ""
         if len(opponent.abilities) == 0 and len(self.abilities) == 0:
             print("Draw")
+            winner = "Draw"
+            return winner
         else:
             while opponent.current_health > 0 and self.current_health > 0:
                 first_move = choice([self.name, opponent.name])
@@ -30,16 +35,22 @@ class Hero:
                     attack = self.attack()
                     opponent.take_damage(attack)
                     if not opponent.is_alive():
-                        winner = self.name 
+                        winner = self.name
+                        opponent.deaths -= 1
+                        self.deaths -= 1
                         break
                 else:
                     attack = opponent.attack()
                     self.take_damage(attack)
                     if not self.is_alive():
                         winner = opponent.name
+                        opponent.kills += 1
+                        self.deaths -= 1
                         break
-        if len(winner) > 0:
+
+        if len(winner) > 0 and winner != "Draw":
             print(f"{winner} won!")
+            return winner
 
     def add_ability(self, ability):
         self.abilities.append(ability)
@@ -75,6 +86,17 @@ class Hero:
     def add_weapon(self, weapon):
         self.abilities.append(weapon)
 
+    def add_kill(self, num_kills):
+        self.kills += num_kills
+
+    def add_death(self, num_deaths):
+        self.deaths += num_deaths
+
+
+    def stats(self):
+        for hero in self.heroes:
+            kd = hero.kills / hero.deaths
+            print(f"{hero.name} Kill/Deaths:{kd}")
 
 if __name__ == "__main__":
     # If you run this file from the terminal
