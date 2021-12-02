@@ -40,12 +40,11 @@ class Team:
         while len(living_heroes) > 0 and len(living_opponents)> 0:
             hero1 = choice(living_heroes)
             hero2 = choice(living_opponents)
-
-            winner = hero1.fight(hero2)
-
-            if winner != "Draw":
-                if winner == hero1.name:
-                    hero1.kills += 1
-                else:
-                    hero2.deaths += 1
             
+            hero1.fight(hero2)
+            
+            if hero1.is_alive():
+                living_opponents.remove(hero2)
+            else:
+                living_heroes.remove(hero1)
+
